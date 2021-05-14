@@ -12,7 +12,7 @@ class SongList(APIView):
     def get(self,request):
         song = Song.objects.all()
         serializer = SongSerializer(song, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
         serializer = SongSerializer(data=request.data)
@@ -20,3 +20,12 @@ class SongList(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class SongDetail(APIView):
+
+    def get_object(self, pk):
+        try:
+            return Song.objects.get(pk=pk)
+        except Song.DoesNotExist:
+            raise Http404
+
